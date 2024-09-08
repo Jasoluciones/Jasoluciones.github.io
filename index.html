@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización de Ventanas</title>
+    <link rel="stylesheet" href="TR2Vias.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cotización de Ventanas</h1>
+        <div class="form-group">
+            <label for="width">Ancho (cm):</label>
+            <input type="number" id="width" required>
+        </div>
+        <div class="form-group">
+            <label for="height">Alto (cm):</label>
+            <input type="number" id="height" required>
+        </div>
+        <button onclick="calculateWindowCost()">Calcular Costo</button>
+        <div id="windowResult" class="result"></div>
+    </div>
+
+    <script>
+        // Datos de referencia para ventanas
+        const referenceWindows = [
+            { width: 54.5, height: 111.5, price: 2500 },
+            { width: 76.5, height: 110, price: 2509 },
+            { width: 89, height: 101.5, price: 3500 }
+        ];
+
+        // Función para interpolar el precio en función de las medidas para ventanas
+        function interpolatePrice(width, height) {
+            let closestReference = referenceWindows[0];
+            let minDifference = Infinity;
+
+            for (const ref of referenceWindows) {
+                const diff = Math.abs((ref.width * ref.height) - (width * height));
+                if (diff < minDifference) {
+                    minDifference = diff;
+                    closestReference = ref;
+                }
+            }
+
+            const scale = (width * height) / (closestReference.width * closestReference.height);
+            return closestReference.price * scale;
+        }
+
+        // Calcular el costo basado en las medidas ingresadas para ventanas
+        function calculateWindowCost() {
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+
+            if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+                alert('Por favor, ingrese medidas válidas.');
+                return;
+            }
+
+            const estimatedPrice = interpolatePrice(width, height);
+
+            // Mostrar el resultado
+            document.getElementById('windowResult').innerText = `Costo estimado: ${Math.round(estimatedPrice)} pesos.`;
+        }
+    </script>
+</body>
+</html>
